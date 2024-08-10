@@ -17,8 +17,8 @@ async def test_create_or_update_product():
     db = await db_instance()
     category = Category(name="Pizza", description="Todas as pizzas")
     product = Product(
-        name="Matgheritta",
-        description="Pizza sabor Margheritta",
+        name="Marguerita",
+        description="Pizza sabor Marguerita",
         price=12.0,
         category=category,
     )

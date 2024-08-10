@@ -1,5 +1,5 @@
 import pytest
-from src.auth.auth import encode_token, decode_token
+from src.auth.auth import encode_token, decode_token, hash_password, verify_password
 import datetime
 import pytz
 import time
@@ -48,3 +48,13 @@ def test_token_spoofing(jwt_token):
     token_spoofing = modify_jwt_token(jwt_token)
     token_data = decode_token(token_spoofing)
     assert token_data == {"message": "error", "error": "Signature verification failed"}
+
+
+@pytest.fixture
+def gen_hash_password():
+    return hash_password("123456")
+
+
+def test_verify_password(gen_hash_password):
+    is_true = verify_password(gen_hash_password, "123456")
+    assert is_true

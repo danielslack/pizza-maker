@@ -1,9 +1,12 @@
 import jwt
 from pydantic import BaseModel
 import datetime
-import pytz
+import pytz  # type: ignore[missing-imports]
 import time
 from typing import Optional
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+
 
 ALG = "HS256"
 SECRET = "MY_TOKEN_SECRET"
@@ -16,6 +19,21 @@ class TokenData(BaseModel):
 
 class TokenDataDecode(TokenData):
     exp: int
+
+
+def hash_password(password: str) -> str:
+    password_hasher = PasswordHasher()
+    return password_hasher.hash(password)
+
+
+def verify_password(hash_password: str, password: str):
+    try:
+        password_hasher = PasswordHasher()
+        return password_hasher.verify(hash_password, password)
+    except VerifyMismatchError as error:
+        return False
+    except Exception as error:
+        print(error)
 
 
 def encode_token(paylod_token: TokenData, seconds: int) -> str:
