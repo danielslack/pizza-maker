@@ -3,6 +3,7 @@ from datetime import datetime
 from pydantic import EmailStr
 from pydantic.fields import Field
 from typing import Optional, Union, Any
+from src.auth.auth import verify_password
 
 
 class User(Document):
@@ -18,11 +19,11 @@ class User(Document):
         return await cls.find_one(cls.username == username.lower())
 
     @classmethod
-    async def get_by_api_key(cls, *, api_key: str) -> Optional["User"]:
-        return await cls.find_one(cls.api_key == api_key.lower())
+    async def get_by_email(cls, *, email: str) -> Optional["User"]:
+        return await cls.find_one(cls.email == email.lower())
 
     @classmethod
-    async def authenticate(cls, *, username: str, password: str) -> Any:
+    async def authenticate(cls, *, username: str, password: str) -> Optional[Union["User", None]]:
         user = await cls.get_by_username(username=username)
         if not user or not verify_password(password, user.hashed_password):
             return None

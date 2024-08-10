@@ -3,6 +3,8 @@ from typing import Sequence, Type, TypeVar
 from inspect import isclass, getmembers
 from beanie import Document
 from .product import Product
+from .user import User
+from .category import Category
 
 DocType = TypeVar("DocType", bound=Document)
 
