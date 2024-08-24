@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import EmailStr
 from pydantic.fields import Field
 from typing import Optional, Union, Any
-from src.auth.auth import verify_password
+from src.auth.auth import verify_password, encode_token, TokenData
 
 
 class User(Document):
@@ -23,12 +23,18 @@ class User(Document):
         return await cls.find_one(cls.email == email.lower())
 
     @classmethod
-    async def authenticate(cls, *, username: str, password: str) -> Optional[Union["User", None]]:
-        user = await cls.get_by_username(username=username)
-        if not user or not verify_password(password, user.hashed_password):
+    async def authenticate(cls, *, username: str, password: str):
+        if "@" in username:
+            user = await cls.get_by_email(email=username)
+        else:
+            user = await cls.get_by_username(username=username)
+
+        if not user or not user.is_active or not verify_password(user.hashed_password, password):
             return None
 
-        return User
+        token = TokenData(username=user.username, email=user.email)
+
+        return encode_token(token, seconds=60 * 60 * 24)
 
     class Settings:
         name = "users"

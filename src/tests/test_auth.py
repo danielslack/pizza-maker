@@ -5,7 +5,7 @@ import pytz
 import time
 import jwt
 
-PAYLOAD = {"name": "Daniel Caria", "email": "daniel.slack2@gmail.com"}
+PAYLOAD = {"username": "Daniel Caria", "email": "daniel.slack2@gmail.com"}
 
 EXP = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(seconds=5)
 
@@ -18,7 +18,7 @@ def jwt_token():
 
 def modify_jwt_token(jwt_token):
     token_data = decode_token(jwt_token)
-    token_data["name"] = "Daniel A Caria"
+    token_data["username"] = "Daniel A Caria"
     fake_token = jwt.encode(token_data, "FAKE_SECRET", "HS256")
     return fake_token
 
@@ -32,8 +32,8 @@ def test_decode_token(jwt_token):
     token_data = decode_token(jwt_token)
     token_keys = token_data.keys()
     assert isinstance(token_data, dict)
-    assert list(token_keys) == ["name", "email", "exp"]
-    assert token_data["name"] == "Daniel Caria"
+    assert list(token_keys) == ["username", "email", "exp"]
+    assert token_data["username"] == "Daniel Caria"
     assert token_data["email"] == "daniel.slack2@gmail.com"
     assert token_data["exp"] == int(datetime.datetime.timestamp(EXP))
 

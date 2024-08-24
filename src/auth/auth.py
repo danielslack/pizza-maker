@@ -13,7 +13,7 @@ SECRET = "MY_TOKEN_SECRET"
 
 
 class TokenData(BaseModel):
-    name: str
+    username: str
     email: str
 
 
